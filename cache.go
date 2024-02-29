@@ -4,10 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"os"
 	"time"
-
+	
 	"github.com/go-redis/redis/v8"
-
+	
 	"github.com/creamsensation/cache/memory"
 )
 
@@ -31,12 +32,19 @@ const (
 )
 
 var (
+	defaultMemoryCacheDir = os.TempDir() + "/.creamsensation/sense/cache/"
+)
+
+var (
 	ErrorAdapterInstanceNotExist = errors.New("cache adapter instance not exist")
 )
 
-func New(ctx context.Context, memory *memory.Client, redis *redis.Client) Client {
+func New(ctx context.Context, mem *memory.Client, redis *redis.Client) Client {
 	var adapter string
 	if redis == nil {
+		if mem == nil {
+			mem = memory.New(defaultMemoryCacheDir)
+		}
 		adapter = AdapterMemory
 	}
 	if redis != nil {
@@ -45,7 +53,7 @@ func New(ctx context.Context, memory *memory.Client, redis *redis.Client) Client
 	return &cache{
 		ctx:     ctx,
 		adapter: adapter,
-		memory:  memory,
+		memory:  mem,
 		redis:   redis,
 	}
 }
