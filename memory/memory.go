@@ -41,10 +41,10 @@ func New(dir string) *Client {
 func (m *Client) Get(key string) string {
 	m.Lock()
 	d, ok := m.data[key]
+	m.Unlock()
 	if !ok {
 		return ""
 	}
-	m.Unlock()
 	return d.Value
 }
 

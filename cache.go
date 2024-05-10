@@ -17,6 +17,10 @@ type Client interface {
 	Get(key string, data any) error
 	Set(key string, data any, expiration time.Duration) error
 	Destroy(key string) error
+	
+	MustGet(key string, data any)
+	MustSet(key string, data any, expiration time.Duration)
+	MustDestroy(key string)
 }
 
 type cache struct {
@@ -97,6 +101,12 @@ func (c cache) Get(key string, data any) error {
 	return nil
 }
 
+func (c cache) MustGet(key string, data any) {
+	if err := c.Get(key, data); err != nil {
+		panic(err)
+	}
+}
+
 func (c cache) Set(key string, data any, expiration time.Duration) error {
 	if c.isNil() {
 		return ErrorAdapterInstanceNotExist
@@ -117,6 +127,12 @@ func (c cache) Set(key string, data any, expiration time.Duration) error {
 	return nil
 }
 
+func (c cache) MustSet(key string, data any, expiration time.Duration) {
+	if err := c.Set(key, data, expiration); err != nil {
+		panic(err)
+	}
+}
+
 func (c cache) Destroy(key string) error {
 	switch c.adapter {
 	case AdapterMemory:
@@ -125,6 +141,12 @@ func (c cache) Destroy(key string) error {
 		return c.Set(key, nil, time.Millisecond)
 	}
 	return nil
+}
+
+func (c cache) MustDestroy(key string) {
+	if err := c.Destroy(key); err != nil {
+		panic(err)
+	}
 }
 
 func (c cache) isNil() bool {
