@@ -89,6 +89,9 @@ func (m *Client) load() {
 			if err != nil {
 				return err
 			}
+			if len(fbts) == 0 {
+				return nil
+			}
 			var d data
 			if err := json.Unmarshal(fbts, &d); err != nil {
 				return err

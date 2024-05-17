@@ -36,7 +36,7 @@ const (
 )
 
 var (
-	defaultMemoryCacheDir = os.TempDir() + "/.creamsensation/sense/cache/"
+	defaultMemoryCacheDir = os.TempDir() + "/.creamsensation/cache/"
 )
 
 var (
